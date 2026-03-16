@@ -1,5 +1,5 @@
 {
-  version = "0.1.0";
-  srcHash = "sha256-9LuLQ2klYz91rEkxNDwcx0lYgE6GPoTJkwgxI/4EHgg=";
-  npmDepsHash = "sha256-DvorQ40CCNQJNQdTPFyMBErFNicSWkNT/e6S8cfZlRA=";
+  version = "0.1.1";
+  srcHash = "sha256-Ao3phIPinliFDK04u/V3ouuOfwMDVf/qBUpQPESziFQ=";
+  npmDepsHash = "sha256-4x3ozVrST6LtLoHl9KtmaOKrkYwCK84fwEREaoNaESc=";
 }
