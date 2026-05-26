@@ -31,7 +31,14 @@
         let
           versions = import ./versions.nix;
           playwright = pkgs.callPackage ./package.nix {
-            inherit (versions) version srcHash npmDepsHash;
+            inherit (versions)
+              version
+              srcHash
+              npmDepsHash
+              chromiumRevision
+              chromiumBrowserVersion
+              chromiumHashes
+              ;
           };
         in
         {
@@ -45,8 +52,16 @@
         let
           versions = import ./versions.nix;
           playwright = pkgs.callPackage ./package.nix {
-            inherit (versions) version srcHash npmDepsHash;
+            inherit (versions)
+              version
+              srcHash
+              npmDepsHash
+              chromiumRevision
+              chromiumBrowserVersion
+              chromiumHashes
+              ;
           };
+
         in
         {
           playwright-cli = {
@@ -57,6 +72,24 @@
             type = "app";
             program = "${playwright}/bin/playwright-cli";
           };
+          # `nix run .#update` — bumps versions.nix to the latest upstream
+          # playwright-cli release and refreshes all hashes.
+          update = {
+            type = "app";
+            program = pkgs.lib.getExe (pkgs.writeShellApplication {
+              name = "playwright-cli-flake-update";
+              runtimeInputs = [
+                pkgs.cacert
+                pkgs.curl
+                pkgs.gnutar
+                pkgs.gzip
+                pkgs.jq
+                pkgs.nix
+                pkgs.prefetch-npm-deps
+              ];
+              text = builtins.readFile ./update.sh;
+            });
+          };
         }
       );
 
@@ -65,7 +98,14 @@
         let
           versions = import ./versions.nix;
           playwright = pkgs.callPackage ./package.nix {
-            inherit (versions) version srcHash npmDepsHash;
+            inherit (versions)
+              version
+              srcHash
+              npmDepsHash
+              chromiumRevision
+              chromiumBrowserVersion
+              chromiumHashes
+              ;
           };
         in
         {

@@ -27,7 +27,7 @@ jobs:
 
       - name: Update version
         run: |
-          ./update.sh
+          nix run .#update
           new_version=$(sed -n 's/.*version = "\([^"]*\)".*/\1/p' versions.nix | head -1)
           echo "NEW_VERSION=${new_version}" >> "$GITHUB_ENV"
 
