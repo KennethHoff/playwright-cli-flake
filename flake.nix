@@ -38,6 +38,8 @@
               chromiumRevision
               chromiumBrowserVersion
               chromiumHashes
+              ffmpegRevision
+              ffmpegHashes
               ;
           };
         in
@@ -59,6 +61,8 @@
               chromiumRevision
               chromiumBrowserVersion
               chromiumHashes
+              ffmpegRevision
+              ffmpegHashes
               ;
           };
 
@@ -76,19 +80,21 @@
           # playwright-cli release and refreshes all hashes.
           update = {
             type = "app";
-            program = pkgs.lib.getExe (pkgs.writeShellApplication {
-              name = "playwright-cli-flake-update";
-              runtimeInputs = [
-                pkgs.cacert
-                pkgs.curl
-                pkgs.gnutar
-                pkgs.gzip
-                pkgs.jq
-                pkgs.nix
-                pkgs.prefetch-npm-deps
-              ];
-              text = builtins.readFile ./update.sh;
-            });
+            program = pkgs.lib.getExe (
+              pkgs.writeShellApplication {
+                name = "playwright-cli-flake-update";
+                runtimeInputs = [
+                  pkgs.cacert
+                  pkgs.curl
+                  pkgs.gnutar
+                  pkgs.gzip
+                  pkgs.jq
+                  pkgs.nix
+                  pkgs.prefetch-npm-deps
+                ];
+                text = builtins.readFile ./update.sh;
+              }
+            );
           };
         }
       );
@@ -105,6 +111,8 @@
               chromiumRevision
               chromiumBrowserVersion
               chromiumHashes
+              ffmpegRevision
+              ffmpegHashes
               ;
           };
         in

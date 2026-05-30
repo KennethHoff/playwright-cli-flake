@@ -48,6 +48,10 @@ CHROMIUM_VER=$(jq -r '.browsers[] | select(.name=="chromium") | .browserVersion'
 echo "chromiumRevision: $CHROMIUM_REV"
 echo "chromiumBrowserVersion: $CHROMIUM_VER"
 
+# ffmpeg revision (Playwright records video through this binary).
+FFMPEG_REV=$(jq -r '.browsers[] | select(.name=="ffmpeg") | .revision' "$BROWSERS_JSON")
+echo "ffmpegRevision: $FFMPEG_REV"
+
 # Per-platform sha256 of chrome + chrome-headless-shell zips.
 # Chrome for Testing does not publish linux-arm64; aarch64-linux is excluded.
 prefetch() {
@@ -62,6 +66,15 @@ for PLATFORM in linux64 mac-x64 mac-arm64; do
     echo "  hashing ${ZIP} ${PLATFORM}..."
     H["${PLATFORM}_${ZIP}"]=$(prefetch "$URL")
   done
+done
+
+# Per-platform sha256 of the ffmpeg zips. linux-arm64 is excluded to match the
+# chromium platform set above.
+declare -A F
+for FF in ffmpeg-linux ffmpeg-mac ffmpeg-mac-arm64; do
+  URL="https://cdn.playwright.dev/builds/ffmpeg/${FFMPEG_REV}/${FF}.zip"
+  echo "  hashing ${FF}..."
+  F["${FF}"]=$(prefetch "$URL")
 done
 
 # Write versions.nix
@@ -92,6 +105,19 @@ cat > versions.nix <<EOF
       chromium = "${H[mac-arm64_chrome]}";
       headless = "${H[mac-arm64_chrome-headless-shell]}";
     };
+  };
+
+  # ffmpeg revision shipped with this playwright-cli release (read from
+  # playwright-core/browsers.json). Playwright records video through this
+  # binary at \$PLAYWRIGHT_BROWSERS_PATH/ffmpeg-<revision>/ffmpeg-<platform>.
+  ffmpegRevision = "${FFMPEG_REV}";
+
+  # Per-platform sha256 of the ffmpeg zips from
+  # https://cdn.playwright.dev/builds/ffmpeg/<ffmpegRevision>/ffmpeg-<platform>.zip
+  ffmpegHashes = {
+    x86_64-linux = "${F[ffmpeg-linux]}";
+    x86_64-darwin = "${F[ffmpeg-mac]}";
+    aarch64-darwin = "${F[ffmpeg-mac-arm64]}";
   };
 }
 EOF

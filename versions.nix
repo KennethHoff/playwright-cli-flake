@@ -25,4 +25,17 @@
       headless = "sha256-+1v5W/QkKENinVT5YIMhOtbIJ/1C/0N4etMmj5TK7do=";
     };
   };
+
+  # ffmpeg revision shipped with this playwright-cli release (read from
+  # playwright-core/browsers.json). Playwright records video through this
+  # binary at $PLAYWRIGHT_BROWSERS_PATH/ffmpeg-<revision>/ffmpeg-<platform>.
+  ffmpegRevision = "1011";
+
+  # Per-platform sha256 of the ffmpeg zips from
+  # https://cdn.playwright.dev/builds/ffmpeg/<ffmpegRevision>/ffmpeg-<platform>.zip
+  ffmpegHashes = {
+    x86_64-linux = "sha256-68dPxblIMBdqPCkUrpa9i8f2qR9PM4kCMPhKFy7mHMw=";
+    x86_64-darwin = "sha256-F+0Vovpg08dBgb78sr33ybsojRmyo7mJO5S2PyziYOQ=";
+    aarch64-darwin = "sha256-fXfrDUS1msxAZfqiR2wN8aJCzJBMNG+CBiaBjJU8Unc=";
+  };
 }
