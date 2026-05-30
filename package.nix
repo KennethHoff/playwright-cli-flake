@@ -152,7 +152,19 @@ buildNpmPackage {
   env.PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1";
 
   postFixup =
-    lib.optionalString stdenv.isLinux ''
+    ''
+      # Default the bundled Chromium instead of the system "chrome" channel.
+      # validateBrowserConfig() in the bundled playwright-core pins
+      # channel="chrome" (the /opt/google/chrome/chrome path) when nothing is
+      # specified; flipping it to "chromium" makes the CLI use the Chromium
+      # shipped here by default. --replace-fail fails the build loudly if a
+      # version bump changes this string.
+      substituteInPlace \
+        $out/lib/node_modules/@playwright/cli/node_modules/playwright-core/lib/coreBundle.js \
+        --replace-fail 'browser.launchOptions.channel = "chrome"' \
+                       'browser.launchOptions.channel = "chromium"'
+    ''
+    + lib.optionalString stdenv.isLinux ''
       wrapProgram $out/bin/playwright-cli \
         ${lib.optionalString (browsersDir ? out) "--set-default PLAYWRIGHT_BROWSERS_PATH ${browsersDir.out}"} \
         --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath browserDeps}"
